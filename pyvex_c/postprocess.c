@@ -250,9 +250,9 @@ void arm_post_processor_determine_calls(
 		}
 	}
 
-	if (popped_lr && irsb->jumpkind == Ijk_Boring) {
-		irsb->jumpkind = Ijk_Call;
-	}
+	//if (popped_lr && irsb->jumpkind == Ijk_Boring) {
+	//	irsb->jumpkind = Ijk_Call;
+	//}
 
 // Undefine all defined values
 #undef ARM_OFFB_LR
