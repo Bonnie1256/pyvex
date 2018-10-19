@@ -47,10 +47,10 @@ def lift(data, addr, arch, max_bytes=None, max_inst=None, bytes_offset=0, opt_le
               ends properly or until it runs out of data to lift.
     """
     if max_bytes is not None and max_bytes <= 0:
-        raise PyVEXError("cannot lift block with no data (max_bytes <= 0)")
+        raise PyVEXError("Cannot lift block with no data (max_bytes <= 0)")
 
     if not data:
-        raise PyVEXError("cannot lift block with no data (data is empty)")
+        raise PyVEXError("Cannot lift block with no data (data is empty)")
 
     if isinstance(data, str):
         raise TypeError("Cannot pass unicode string as data to lifter")
@@ -60,6 +60,8 @@ def lift(data, addr, arch, max_bytes=None, max_inst=None, bytes_offset=0, opt_le
         c_data = None
         allow_arch_optimizations = False
     else:
+        if max_bytes is None:
+            raise PyVEXError("Cannot lift block with ffi pointer and no size (max_bytes is None)")
         c_data = data
         py_data = None
         allow_arch_optimizations = True
@@ -79,7 +81,7 @@ def lift(data, addr, arch, max_bytes=None, max_inst=None, bytes_offset=0, opt_le
             if lifter.REQUIRE_DATA_C:
                 if c_data is None:
                     u_data = ffi.new('unsigned char [%d]' % (len(py_data) + 8), py_data + b'\0' * 8)
-                    max_bytes = len(py_data)
+                    max_bytes = min(len(py_data), max_bytes) if max_bytes is not None else len(py_data)
                 else:
                     u_data = c_data
             elif lifter.REQUIRE_DATA_PY:
